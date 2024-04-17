@@ -1,0 +1,54 @@
+body,
+html {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+#canvas-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#linearlyPolarizedButton {
+    position: absolute;
+    top: 20px;
+    /* Start at 10px from the top */
+    left: 10px;
+    padding: 20px;
+    font-size: 20px;
+    z-index: 1;
+    background-color: #4c7faf;
+    color: white;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+}
+
+#circularlyPolarizedButton {
+    position: absolute;
+    top: 20px;
+    /* Adjusted to provide spacing considering the height and padding of the first button */
+    left: 220px;
+    padding: 20px;
+    font-size: 20px;
+    z-index: 1;
+    background-color: #4c7faf;
+    color: white;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+}
+
+#unPolarizedButton {
+    position: absolute;
+    top: 20px;
+    /* Further adjusted considering the previous buttons */
+    left: 450px;
+    padding: 20px;
+    font-size: 20px;
+    z-index: 1;
+    background-color: #4c7faf;
+    color: white;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+}
