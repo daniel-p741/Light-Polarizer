@@ -67,14 +67,15 @@ html {
 .slider-label {
     display: block;
     margin-bottom: 5px;
-    font-size: 18px;
+    font-size: 22px;
     color: #333;
+    font-family: 'Roboto', sans-serif;
 }
 
 .slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 200px;
+    width: 210px;
     /* You can adjust this width as needed */
     height: 15px;
     background: #d3d3d3;

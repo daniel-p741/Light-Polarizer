@@ -50,6 +50,21 @@ window.onload = function () {
 
     scene.add(polarizer);
 
+    // Get the rotation slider from the DOM
+    const rotationSlider = document.getElementById('Rotation');
+    const rotationValue = document.getElementById('RotationValue');
+
+    // Update polarizer rotation based on slider value
+    rotationSlider.addEventListener('input', function () {
+        const degrees = parseInt(this.value);
+        rotationValue.textContent = degrees; // Update the text display
+
+        // Convert degrees to radians and set rotation
+        const radians = degrees * (Math.PI / 180);
+        polarizer.rotation.y = radians; // Assuming you want to rotate around the y-axis
+    });
+
+
 
 
     const visibleWidthAtZDepth = (depth, camera) => {
