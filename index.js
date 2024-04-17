@@ -161,11 +161,22 @@ window.onload = function () {
     const shiftDown = 2.2;
     points[0].y -= shiftDown;
 
+    document.getElementById('Speed').addEventListener('input', function () {
+        document.getElementById('SpeedValue').textContent = this.value;
+        speedFactor = parseFloat(this.value);
+    });
+
+    document.getElementById('Frequency').addEventListener('input', function () {
+        document.getElementById('FrequencyValue').textContent = this.value;
+        frequencyFactor = parseFloat(this.value);
+    });
+
+    let speedFactor = parseFloat(document.getElementById('Speed').value);
+    let frequencyFactor = parseFloat(document.getElementById('Frequency').value);
+
     function animate() {
         requestAnimationFrame(animate);
-        const time = clock.getElapsedTime();
-
-        // Increment frame counter at the start of each frame
+        const time = clock.getElapsedTime() * speedFactor;
         frameCounter++;
 
         // Update random amplitude and frequency at a controlled rate
@@ -175,23 +186,26 @@ window.onload = function () {
         }
 
         for (let i = 0; i < points.length; i++) {
+            let phase = frequencyFactor * (points[i].x - time);
             if (showSineWave) {
-                points[i].y = Math.sin(points[i].x + time);
+                points[i].y = Math.sin(phase);
                 points[i].z = 0;
             } else if (showCircularWave) {
-                points[i].y = Math.sin(points[i].x + time);
-                points[i].z = Math.cos(points[i].x + time);
+                points[i].y = Math.sin(phase);
+                points[i].z = Math.cos(phase);
             } else if (showUnpolarizedWave) {
-                points[i].y = Math.sin(randomFrequency * (points[i].x + time)) * randomAmplitude;
-                points[i].z = Math.cos(randomFrequency * (points[i].x + time)) * randomAmplitude;
+                // For unpolarized waves, vary amplitude and frequency randomly but controlled by sliders
+                points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
+                points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
+
             } else {
                 points[i].y = 0;
                 points[i].z = 0;
             }
         }
 
-        lineGeometry.setPoints(points);  // Re-assigning updated points to the geometry
-        line.geometry.attributes.position.needsUpdate = true;  // Informing Three.js that the positions need an update
+        lineGeometry.setPoints(points);
+        line.geometry.attributes.position.needsUpdate = true;
 
         renderer.render(scene, camera);
     }
