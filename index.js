@@ -1,7 +1,7 @@
 window.onload = function () {
     let showSineWave = false;
     let showCircularWave = false;
-    let showUnpolarizedWave = false;
+    let showUnpolarizedWave = true;
     // Get the DOM element to attach the scene
     const container = document.querySelector('#canvas-container');
 
@@ -67,24 +67,14 @@ window.onload = function () {
 
 
 
-    const visibleWidthAtZDepth = (depth, camera) => {
-        const cameraOffset = camera.position.z;
-        if (depth < cameraOffset) depth -= cameraOffset;
-        else depth += cameraOffset;
-
-        const vFOV = camera.fov * Math.PI / 180;
-        const height = 2 * Math.tan(vFOV / 2) * Math.abs(depth);
-        const aspect = camera.aspect;
-        const width = height * aspect;
-        return width;
-    }
 
 
 
     const polarizerZ = polarizer.position.z;
-    const totalWidth = visibleWidthAtZDepth(polarizerZ, camera);
-    const leftMostPoint = -totalWidth / 2;
+    //const totalWidth = visibleWidthAtZDepth(polarizerZ, camera);
     const aspect = window.innerWidth / window.innerHeight;
+    const leftMostPoint = -aspect * camera.fov * Math.abs(polarizerZ);
+
     const rightMostPoint = aspect * camera.fov * Math.abs(polarizerZ);
 
     const left_material = new MeshLineMaterial({
@@ -95,9 +85,26 @@ window.onload = function () {
         transparent: true,
     });
 
+    //let unpolarizedPhase = 0;
+    //let unpolarizedAmplitude = 1;  // Same amplitude as polarized waves for comparable crests
+    //let amplitudeY = 1;
+    //let amplitudeZ = 1;
+    const maxAmplitude = 1;  // Maximum crest height
+    const maxFrequency = 1;  // Frequency, measured in cycles per 2π radians
+    //let randomAmplitude = maxAmplitude * (0.5 + Math.random() * 0.5); // Random amplitude between 0.5 and 1
+    //let randomFrequency = maxFrequency * (0.75 + Math.random() * 0.25); // Random frequency between 0.75 and 1 cycles per 2π
+
+    let updateFrequency = 100;  // Update every 100 frames
+    let frameCounter = 0;
+    let randomAmplitude = maxAmplitude * (0.5 + Math.random() * 0.5); // Initial random amplitude
+    let randomFrequency = maxFrequency * (0.75 + Math.random() * 0.25); // Initial random frequency
+
     const left_points = [];
-    for (let i = leftMostPoint; i <= 0; i += 0.1) {
-        left_points.push(new THREE.Vector3(i, 0, polarizerZ));
+    for (let i = -polarizerWidth / 2; i >= leftMostPoint; i -= 0.1) {
+        //left_points.push(new THREE.Vector3(i, 0, polarizerZ));
+        let y = Math.sin(randomFrequency * i) * randomAmplitude;
+        let z = Math.cos(randomFrequency * i) * randomAmplitude;
+        left_points.push(new THREE.Vector3(i, y, z));
     }
 
     const left_line = new MeshLine();
@@ -136,19 +143,7 @@ window.onload = function () {
         transparent: true,
     });
 
-    //let unpolarizedPhase = 0;
-    //let unpolarizedAmplitude = 1;  // Same amplitude as polarized waves for comparable crests
-    //let amplitudeY = 1;
-    //let amplitudeZ = 1;
-    const maxAmplitude = 1;  // Maximum crest height
-    const maxFrequency = 1;  // Frequency, measured in cycles per 2π radians
-    //let randomAmplitude = maxAmplitude * (0.5 + Math.random() * 0.5); // Random amplitude between 0.5 and 1
-    //let randomFrequency = maxFrequency * (0.75 + Math.random() * 0.25); // Random frequency between 0.75 and 1 cycles per 2π
 
-    let updateFrequency = 100;  // Update every 100 frames
-    let frameCounter = 0;
-    let randomAmplitude = maxAmplitude * (0.5 + Math.random() * 0.5); // Initial random amplitude
-    let randomFrequency = maxFrequency * (0.75 + Math.random() * 0.25); // Initial random frequency
 
     const points = [];
     for (let i = polarizerWidth / 2; i <= rightMostPoint; i += 0.1) {
@@ -200,8 +195,18 @@ window.onload = function () {
             randomFrequency = maxFrequency * (0.75 + Math.random() * 0.25);  // Random frequency between 0.75 and 1 cycles per 2π
         }
 
+        for (let i = 0; i < left_points.length; i++) {
+            let phase = frequencyFactor * (-left_points[i].x + time);
+            left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
+            left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
+        }
+        left_line.setPoints(left_points); // Ensure this method exists and works as expected
+        left_mesh.geometry.attributes.position.needsUpdate = true;
+
         for (let i = 0; i < points.length; i++) {
             let phase = frequencyFactor * (points[i].x - time);
+            //left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
+            //left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
             if (showSineWave) {
                 points[i].y = Math.sin(phase);
                 points[i].z = 0;
