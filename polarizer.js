@@ -1,7 +1,7 @@
 window.onload = function () {
-    let showSineWave = false;
+    let showSineWave = true;
     let showCircularWave = false;
-    let showUnpolarizedWave = true;
+    let showUnpolarizedWave = false;
     // Get the DOM element to attach the scene
     const container = document.querySelector('#canvas-container');
 
@@ -102,9 +102,10 @@ window.onload = function () {
     const left_points = [];
     for (let i = -polarizerWidth / 2; i >= leftMostPoint; i -= 0.1) {
         //left_points.push(new THREE.Vector3(i, 0, polarizerZ));
-        let y = Math.sin(randomFrequency * i) * randomAmplitude;
-        let z = Math.cos(randomFrequency * i) * randomAmplitude;
-        left_points.push(new THREE.Vector3(i, y, z));
+        //let y = Math.sin(randomFrequency * i) * randomAmplitude;
+        //let z = Math.cos(randomFrequency * i) * randomAmplitude;
+        //left_points.push(new THREE.Vector3(i, y, z));
+        left_points.push(new THREE.Vector3(i, Math.sin(i), 0));
     }
 
     const left_line = new MeshLine();
@@ -197,8 +198,10 @@ window.onload = function () {
 
         for (let i = 0; i < left_points.length; i++) {
             let phase = frequencyFactor * (-left_points[i].x + time);
-            left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
-            left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
+            //left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
+            //left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
+            left_points[i].y = Math.sin(phase);
+            left_points[i].z = 0;
         }
         left_line.setPoints(left_points); // Ensure this method exists and works as expected
         left_mesh.geometry.attributes.position.needsUpdate = true;
@@ -217,6 +220,7 @@ window.onload = function () {
                 // For unpolarized waves, vary amplitude and frequency randomly but controlled by sliders
                 points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
                 points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
+
 
             } else {
                 points[i].y = 0;
