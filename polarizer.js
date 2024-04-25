@@ -117,20 +117,20 @@ window.onload = function () {
 
 
     document.getElementById('linearlyPolarizedButton').addEventListener('click', function () {
-        showSineWave = !showSineWave;
+        showSineWave = true;
         showCircularWave = false;  // Ensure only one type of polarization is active
         showUnpolarizedWave = false;  // Ensure only one type of polarization is active
 
     });
 
     document.getElementById('circularlyPolarizedButton').addEventListener('click', function () {
-        showCircularWave = !showCircularWave;
+        showCircularWave = true;
         showSineWave = false;  // Ensure only one type of polarization is active
         showUnpolarizedWave = false;  // Ensure only one type of polarization is active
     });
 
     document.getElementById('unPolarizedButton').addEventListener('click', function () {
-        showUnpolarizedWave = !showUnpolarizedWave;
+        showUnpolarizedWave = true;
         showSineWave = false;  // Ensure only one type of polarization is active
         showCircularWave = false;  // Ensure only one type of polarization is active
     });
