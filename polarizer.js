@@ -197,6 +197,7 @@ window.onload = function () {
     function animate() {
         requestAnimationFrame(animate);
         const intensity = calculateIntensity();
+        material.opacity = intensity;
         const time = clock.getElapsedTime() * speedFactor;
         frameCounter++;
 
@@ -212,6 +213,7 @@ window.onload = function () {
             //left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
             points[i].y = Math.sin(phase) * intensity;
             points[i].z = 0;
+
         }
         lineGeometry.setPoints(points); // Ensure this method exists and works as expected
         line.geometry.attributes.position.needsUpdate = true;
