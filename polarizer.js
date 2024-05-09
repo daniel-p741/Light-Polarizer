@@ -101,11 +101,23 @@ window.onload = function () {
 
     const left_points = [];
     for (let i = -polarizerWidth / 2; i >= leftMostPoint; i -= 0.1) {
+        if (showSineWave) {
+            left_points.push(new THREE.Vector3(i, Math.sin(i), 0));
+        } else if (showCircularWave) {
+            left_points.push(new THREE.Vector3(i, Math.sin(i), Math.cos(i)));
+        } else if (showUnpolarizedWave) {
+            // Applying random amplitude and frequency within bounds
+            let y = Math.sin(randomFrequency * i) * randomAmplitude;
+            let z = Math.cos(randomFrequency * i) * randomAmplitude;
+            left_points.push(new THREE.Vector3(i, y, z));
+        } else {
+            left_points.push(new THREE.Vector3(i, 0, 0));
+        }
         //left_points.push(new THREE.Vector3(i, 0, polarizerZ));
         //let y = Math.sin(randomFrequency * i) * randomAmplitude;
         //let z = Math.cos(randomFrequency * i) * randomAmplitude;
         //left_points.push(new THREE.Vector3(i, y, z));
-        left_points.push(new THREE.Vector3(i, Math.sin(i), 0));
+        //left_points.push(new THREE.Vector3(i, Math.sin(i), 0));
     }
 
     const left_line = new MeshLine();
@@ -148,18 +160,19 @@ window.onload = function () {
 
     const points = [];
     for (let i = polarizerWidth / 2; i <= rightMostPoint; i += 0.1) {
-        if (showSineWave) {
-            points.push(new THREE.Vector3(i, Math.sin(i), 0));
-        } else if (showCircularWave) {
-            points.push(new THREE.Vector3(i, Math.sin(i), Math.cos(i)));
-        } else if (showUnpolarizedWave) {
-            // Applying random amplitude and frequency within bounds
-            let y = Math.sin(randomFrequency * i) * randomAmplitude;
-            let z = Math.cos(randomFrequency * i) * randomAmplitude;
-            points.push(new THREE.Vector3(i, y, z));
-        } else {
-            points.push(new THREE.Vector3(i, 0, 0));
-        }
+        //if (showSineWave) {
+        //    points.push(new THREE.Vector3(i, Math.sin(i), 0));
+        //} else if (showCircularWave) {
+        //    points.push(new THREE.Vector3(i, Math.sin(i), Math.cos(i)));
+        //} else if (showUnpolarizedWave) {
+        // Applying random amplitude and frequency within bounds
+        //    let y = Math.sin(randomFrequency * i) * randomAmplitude;
+        //    let z = Math.cos(randomFrequency * i) * randomAmplitude;
+        //    points.push(new THREE.Vector3(i, y, z));
+        //} else {
+        //    points.push(new THREE.Vector3(i, 0, 0));
+        //}
+        points.push(new THREE.Vector3(i, Math.sin(i), 0));
     }
 
     const lineGeometry = new MeshLine();
@@ -196,40 +209,40 @@ window.onload = function () {
             randomFrequency = maxFrequency * (0.75 + Math.random() * 0.25);  // Random frequency between 0.75 and 1 cycles per 2π
         }
 
-        for (let i = 0; i < left_points.length; i++) {
-            let phase = frequencyFactor * (-left_points[i].x + time);
+        for (let i = 0; i < points.length; i++) {
+            let phase = frequencyFactor * (-points[i].x + time);
             //left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
             //left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
-            left_points[i].y = Math.sin(phase);
-            left_points[i].z = 0;
+            points[i].y = Math.sin(phase);
+            points[i].z = 0;
         }
-        left_line.setPoints(left_points); // Ensure this method exists and works as expected
-        left_mesh.geometry.attributes.position.needsUpdate = true;
+        lineGeometry.setPoints(points); // Ensure this method exists and works as expected
+        line.geometry.attributes.position.needsUpdate = true;
 
-        for (let i = 0; i < points.length; i++) {
-            let phase = frequencyFactor * (points[i].x - time);
+        for (let i = 0; i < left_points.length; i++) {
+            let phase = frequencyFactor * (left_points[i].x - time);
             //left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
             //left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
             if (showSineWave) {
-                points[i].y = Math.sin(phase);
-                points[i].z = 0;
+                left_points[i].y = Math.sin(phase);
+                left_points[i].z = 0;
             } else if (showCircularWave) {
-                points[i].y = Math.sin(phase);
-                points[i].z = Math.cos(phase);
+                left_points[i].y = Math.sin(phase);
+                left_points[i].z = Math.cos(phase);
             } else if (showUnpolarizedWave) {
                 // For unpolarized waves, vary amplitude and frequency randomly but controlled by sliders
-                points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
-                points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
+                left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
+                left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
 
 
             } else {
-                points[i].y = 0;
-                points[i].z = 0;
+                left_points[i].y = 0;
+                left_points[i].z = 0;
             }
         }
 
-        lineGeometry.setPoints(points);
-        line.geometry.attributes.position.needsUpdate = true;
+        left_line.setPoints(left_points);
+        left_mesh.geometry.attributes.position.needsUpdate = true;
 
         renderer.render(scene, camera);
     }
