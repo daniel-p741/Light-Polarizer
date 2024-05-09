@@ -54,14 +54,14 @@ window.onload = function () {
     const rotationSlider = document.getElementById('Rotation');
     const rotationValue = document.getElementById('RotationValue');
 
-    // Update polarizer rotation based on slider value
+
+    // Call this function every time the rotation changes
     rotationSlider.addEventListener('input', function () {
         const degrees = parseInt(this.value);
         rotationValue.textContent = degrees; // Update the text display
-
-        // Convert degrees to radians and set rotation
         const radians = degrees * (Math.PI / 180);
-        polarizer.rotation.y = radians; // Assuming you want to rotate around the y-axis
+        polarizer.rotation.y = radians; // Rotate polarizer
+
     });
 
 
@@ -160,18 +160,7 @@ window.onload = function () {
 
     const points = [];
     for (let i = polarizerWidth / 2; i <= rightMostPoint; i += 0.1) {
-        //if (showSineWave) {
-        //    points.push(new THREE.Vector3(i, Math.sin(i), 0));
-        //} else if (showCircularWave) {
-        //    points.push(new THREE.Vector3(i, Math.sin(i), Math.cos(i)));
-        //} else if (showUnpolarizedWave) {
-        // Applying random amplitude and frequency within bounds
-        //    let y = Math.sin(randomFrequency * i) * randomAmplitude;
-        //    let z = Math.cos(randomFrequency * i) * randomAmplitude;
-        //    points.push(new THREE.Vector3(i, y, z));
-        //} else {
-        //    points.push(new THREE.Vector3(i, 0, 0));
-        //}
+
         points.push(new THREE.Vector3(i, Math.sin(i), 0));
     }
 
@@ -198,8 +187,16 @@ window.onload = function () {
     let speedFactor = parseFloat(document.getElementById('Speed').value);
     let frequencyFactor = parseFloat(document.getElementById('Frequency').value);
 
+    let initialPolarizationDirection = new THREE.Vector3(0, 1, 0);
+
+    function calculateIntensity() {
+        const theta = polarizer.rotation.y; // get current rotation angle
+        return Math.pow(Math.cos(theta), 2); // using Malus's Law
+    }
+
     function animate() {
         requestAnimationFrame(animate);
+        const intensity = calculateIntensity();
         const time = clock.getElapsedTime() * speedFactor;
         frameCounter++;
 
@@ -213,7 +210,7 @@ window.onload = function () {
             let phase = frequencyFactor * (-points[i].x + time);
             //left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
             //left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
-            points[i].y = Math.sin(phase);
+            points[i].y = Math.sin(phase) * intensity;
             points[i].z = 0;
         }
         lineGeometry.setPoints(points); // Ensure this method exists and works as expected
