@@ -2,30 +2,30 @@ window.onload = function () {
     let showSineWave = true;
     let showCircularWave = false;
     let showUnpolarizedWave = false;
-    // Get the DOM element to attach the scene
+
     const container = document.querySelector('#canvas-container');
 
 
     let clock = new THREE.Clock();
 
-    // Create the scene
+
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xabcdef);
 
-    // Create and position the camera
+
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    // Position the camera closer to the object
+
     camera.position.set(0, 0, 10);
     camera.lookAt(scene.position);
 
-    // Create the renderer and attach it to the DOM
-    //const renderer = new THREE.WebGLRenderer();
+
+
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
     renderer.setSize(container.offsetWidth, container.offsetHeight);
     container.appendChild(renderer.domElement);
 
-    //const polarizerGeometry = new THREE.BoxGeometry(120, 73, 10, 104, 104, 1); // Added depth of 10
+
 
     const polarizerWidth = 1.5;
 
@@ -34,9 +34,9 @@ window.onload = function () {
 
 
     const polarizerMaterial = new THREE.MeshPhongMaterial({
-        color: 0x808080, // gray color
+        color: 0x808080,
         transparent: true,
-        opacity: 0.24, // more transparent
+        opacity: 0.24,
         shininess: 100,
         reflectivity: 0.5,
         flatShading: true,
@@ -50,17 +50,17 @@ window.onload = function () {
 
     scene.add(polarizer);
 
-    // Get the rotation slider from the DOM
+
     const rotationSlider = document.getElementById('Rotation');
     const rotationValue = document.getElementById('RotationValue');
 
 
-    // Call this function every time the rotation changes
+
     rotationSlider.addEventListener('input', function () {
         const degrees = parseInt(this.value);
-        rotationValue.textContent = degrees; // Update the text display
+        rotationValue.textContent = degrees;
         const radians = degrees * (Math.PI / 180);
-        polarizer.rotation.y = radians; // Rotate polarizer
+        polarizer.rotation.y = radians;
 
     });
 
@@ -71,7 +71,7 @@ window.onload = function () {
 
 
     const polarizerZ = polarizer.position.z;
-    //const totalWidth = visibleWidthAtZDepth(polarizerZ, camera);
+
     const aspect = window.innerWidth / window.innerHeight;
     const leftMostPoint = -aspect * camera.fov * Math.abs(polarizerZ);
 
@@ -80,24 +80,19 @@ window.onload = function () {
     const left_material = new MeshLineMaterial({
         useMap: false,
         color: new THREE.Color(0xffff00),
-        lineWidth: 0.015,  // Adjust line width
-        sizeAttenuation: false, // Line width is constant regardless of distance from camera
+        lineWidth: 0.015,
+        sizeAttenuation: false,
         transparent: true,
     });
 
-    //let unpolarizedPhase = 0;
-    //let unpolarizedAmplitude = 1;  // Same amplitude as polarized waves for comparable crests
-    //let amplitudeY = 1;
-    //let amplitudeZ = 1;
-    const maxAmplitude = 1;  // Maximum crest height
-    const maxFrequency = 1;  // Frequency, measured in cycles per 2π radians
-    //let randomAmplitude = maxAmplitude * (0.5 + Math.random() * 0.5); // Random amplitude between 0.5 and 1
-    //let randomFrequency = maxFrequency * (0.75 + Math.random() * 0.25); // Random frequency between 0.75 and 1 cycles per 2π
 
-    let updateFrequency = 100;  // Update every 100 frames
+    const maxAmplitude = 1;
+    const maxFrequency = 1;
+
+    let updateFrequency = 100;
     let frameCounter = 0;
-    let randomAmplitude = maxAmplitude * (0.5 + Math.random() * 0.5); // Initial random amplitude
-    let randomFrequency = maxFrequency * (0.75 + Math.random() * 0.25); // Initial random frequency
+    let randomAmplitude = maxAmplitude * (0.5 + Math.random() * 0.5);
+    let randomFrequency = maxFrequency * (0.75 + Math.random() * 0.25);
 
     const left_points = [];
     for (let i = -polarizerWidth / 2; i >= leftMostPoint; i -= 0.1) {
@@ -113,11 +108,7 @@ window.onload = function () {
         } else {
             left_points.push(new THREE.Vector3(i, 0, 0));
         }
-        //left_points.push(new THREE.Vector3(i, 0, polarizerZ));
-        //let y = Math.sin(randomFrequency * i) * randomAmplitude;
-        //let z = Math.cos(randomFrequency * i) * randomAmplitude;
-        //left_points.push(new THREE.Vector3(i, y, z));
-        //left_points.push(new THREE.Vector3(i, Math.sin(i), 0));
+
     }
 
     const left_line = new MeshLine();
@@ -130,29 +121,29 @@ window.onload = function () {
 
     document.getElementById('linearlyPolarizedButton').addEventListener('click', function () {
         showSineWave = true;
-        showCircularWave = false;  // Ensure only one type of polarization is active
-        showUnpolarizedWave = false;  // Ensure only one type of polarization is active
+        showCircularWave = false;
+        showUnpolarizedWave = false;
 
     });
 
     document.getElementById('circularlyPolarizedButton').addEventListener('click', function () {
         showCircularWave = true;
-        showSineWave = false;  // Ensure only one type of polarization is active
-        showUnpolarizedWave = false;  // Ensure only one type of polarization is active
+        showSineWave = false;
+        showUnpolarizedWave = false;
     });
 
     document.getElementById('unPolarizedButton').addEventListener('click', function () {
         showUnpolarizedWave = true;
-        showSineWave = false;  // Ensure only one type of polarization is active
-        showCircularWave = false;  // Ensure only one type of polarization is active
+        showSineWave = false;
+        showCircularWave = false;
     });
 
-    // Create a yellow line
+
     const material = new MeshLineMaterial({
         useMap: false,
-        color: new THREE.Color(0xffff00), // Yellow color
-        lineWidth: 0.015,  // Adjust line width
-        sizeAttenuation: false, // Line width is constant regardless of distance from camera
+        color: new THREE.Color(0xffff00),
+        lineWidth: 0.015,
+        sizeAttenuation: false,
         transparent: true,
     });
 
@@ -170,7 +161,7 @@ window.onload = function () {
     const line = new THREE.Mesh(lineGeometry.geometry, material);
     scene.add(line);
 
-    // Shift the starting point down
+
     const shiftDown = 2.2;
     points[0].y -= shiftDown;
 
@@ -187,10 +178,10 @@ window.onload = function () {
     let speedFactor = parseFloat(document.getElementById('Speed').value);
     let frequencyFactor = parseFloat(document.getElementById('Frequency').value);
 
-    let initialPolarizationDirection = new THREE.Vector3(0, 1, 0);
+
 
     function calculateIntensity() {
-        const theta = polarizer.rotation.y; // get current rotation angle
+        const theta = polarizer.rotation.y;
         return Math.pow(Math.cos(theta), 2); // using Malus's Law
     }
 
@@ -209,19 +200,16 @@ window.onload = function () {
 
         for (let i = 0; i < points.length; i++) {
             let phase = frequencyFactor * (-points[i].x + time);
-            //left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
-            //left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
+
             points[i].y = Math.sin(phase) * intensity;
             points[i].z = 0;
 
         }
-        lineGeometry.setPoints(points); // Ensure this method exists and works as expected
+        lineGeometry.setPoints(points);
         line.geometry.attributes.position.needsUpdate = true;
 
         for (let i = 0; i < left_points.length; i++) {
             let phase = frequencyFactor * (left_points[i].x - time);
-            //left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
-            //left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
             if (showSineWave) {
                 left_points[i].y = Math.sin(phase);
                 left_points[i].z = 0;
@@ -229,7 +217,7 @@ window.onload = function () {
                 left_points[i].y = Math.sin(phase);
                 left_points[i].z = Math.cos(phase);
             } else if (showUnpolarizedWave) {
-                // For unpolarized waves, vary amplitude and frequency randomly but controlled by sliders
+                // For unpolarized waves, vary amplitude and frequency randomly
                 left_points[i].y = Math.sin(randomFrequency * phase) * randomAmplitude;
                 left_points[i].z = Math.cos(randomFrequency * phase) * randomAmplitude;
 
